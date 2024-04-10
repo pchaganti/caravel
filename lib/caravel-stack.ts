@@ -2,13 +2,17 @@ import * as cdk from "aws-cdk-lib";
 import { Construct } from "constructs";
 import * as blueprints from "@aws-quickstart/eks-blueprints";
 
-blueprints.HelmAddOn.validateHelmVersions = true;
-
 const addOns: Array<blueprints.ClusterAddOn> = [];
 
 export class CaravelStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
+
+    blueprints.HelmAddOn.validateHelmVersions = this.node.tryGetContext(
+      "caravel.eks.default.validate.helm.versions"
+    );
+
+    enableClusterAddons(this);
 
     const stack = blueprints.EksBlueprint.builder()
       .account(props?.env?.account)
@@ -17,5 +21,29 @@ export class CaravelStack extends cdk.Stack {
       .addOns(...addOns)
       .useDefaultSecretEncryption(true)
       .build(scope, `${id}-stack`);
+  }
+}
+
+function enableClusterAddons(scope: Construct) {
+  if (scope.node.tryGetContext("caravel.eks.addons")["argo-cd"]["enabled"]) {
+    addOns.push(new blueprints.addons.ArgoCDAddOn());
+  }
+
+  if (
+    scope.node.tryGetContext("caravel.eks.addons")["metrics-server"]["enabled"]
+  ) {
+    addOns.push(new blueprints.addons.MetricsServerAddOn());
+  }
+
+  if (scope.node.tryGetContext("caravel.eks.addons")["core-dns"]["enabled"]) {
+    addOns.push(new blueprints.addons.CoreDnsAddOn());
+  }
+
+  if (scope.node.tryGetContext("caravel.eks.addons")["kube-proxy"]["enabled"]) {
+    addOns.push(new blueprints.addons.KubeProxyAddOn());
+  }
+
+  if (scope.node.tryGetContext("caravel.eks.addons")["vpc-cni"]["enabled"]) {
+    addOns.push(new blueprints.addons.VpcCniAddOn());
   }
 }

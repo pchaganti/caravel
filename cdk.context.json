@@ -3,5 +3,39 @@
   "caravel.eks.team": "arch",
   "caravel.eks.name": "caravel", 
   "caravel.eks.version": "auto", 
-  "caravel.eks.default.secret.encryption": false
+  "caravel.eks.default.secret.encryption": false,
+  "caravel.eks.default.validate.helm.versions": false,
+  "caravel.eks.addons": {
+    "argo-cd": {
+      "enabled": true
+    },
+    "metrics-server": {
+      "enabled": true
+    },
+    "core-dns": {
+      "enabled": true
+    },
+    "kube-proxy": {
+      "enabled": true
+    },
+    "vpc-cni": {
+      "enabled": true
+    },
+    "aws-ebs-csi-driver": {
+      "enabled": false
+    },
+    "aws-efs-csi-driver": {
+      "enabled": false
+    },
+    "aws-for-fluent-bit": {
+      "enabled": false
+    },
+    "aws-load-balancer-controller": {
+      "enabled": false
+    },
+    "aws-node-termination-handler": {
+      "enabled": false
+    }
+  }
+
 }
