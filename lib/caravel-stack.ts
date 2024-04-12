@@ -24,7 +24,6 @@ export class CaravelStack extends Stack {
 
     const fargateClusterProvider = new blueprints.FargateClusterProvider({
       fargateProfiles,
-      version: eks.KubernetesVersion.V1_29,
     });
 
     const stack = blueprints.EksBlueprint.builder()
