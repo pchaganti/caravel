@@ -1,7 +1,7 @@
 {
   "caravel.eks.env": "dev",
   "caravel.eks.team": "arch",
-  "caravel.eks.name": "caravel", 
+  "caravel.eks.name": "ion", 
   "caravel.eks.version": "auto", 
   "caravel.eks.default.secret.encryption": false,
   "caravel.eks.default.validate.helm.versions": false,
