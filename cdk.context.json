@@ -1,10 +1,12 @@
 {
   "caravel.eks.env": "dev",
   "caravel.eks.team": "arch",
-  "caravel.eks.name": "ion", 
-  "caravel.eks.version": "auto", 
+  "caravel.eks.name": "ion",
+  "caravel.eks.version": "auto",
   "caravel.eks.default.secret.encryption": false,
   "caravel.eks.default.validate.helm.versions": false,
+  "caravel.eks.teams.dev.users": "ion.dev",
+  "caravel.eks.teams.platform.users": "ion.platform",
   "caravel.eks.addons": {
     "argo-cd": {
       "enabled": true
@@ -37,5 +39,4 @@
       "enabled": false
     }
   }
-
 }
