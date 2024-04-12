@@ -9,7 +9,7 @@
   "caravel.eks.teams.platform.users": "ion.platform",
   "caravel.eks.addons": {
     "argo-cd": {
-      "enabled": true
+      "enabled": false
     },
     "metrics-server": {
       "enabled": true

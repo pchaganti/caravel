@@ -4,14 +4,12 @@ import { ApplicationTeam } from "@aws-quickstart/eks-blueprints";
 import { Construct } from "constructs";
 
 export class TeamDev extends ApplicationTeam {
-  constructor(scope: Construct) {
+  constructor(scope: Construct, accountID?: string) {
     super({
       name: "development",
       users: [
         new ArnPrincipal(
-          `arn:aws:iam::${
-            process.env.CDK_DEFAULT_ACCOUNT
-          }:user/${scope.node.tryGetContext(
+          `arn:aws:iam::${accountID}:user/${scope.node.tryGetContext(
             "caravel.eks.teams.dev.users"
           )}`
         ),

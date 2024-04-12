@@ -14,14 +14,15 @@ export class CaravelStack extends cdk.Stack {
     );
 
     enableClusterAddons(this);
-    const devTeam = new team.TeamDev(scope);
+    const devTeam = new team.TeamDev(scope, this.account);
+    const platformTeam = new team.TeamPlatform(scope, this.account);
 
     const stack = blueprints.EksBlueprint.builder()
-      .account(props?.env?.account)
+      .account(this.account)
       .region(props?.env?.region)
       .version(this.node.tryGetContext("caravel.eks.version"))
       .addOns(...addOns)
-      .teams(devTeam)
+      .teams(devTeam, platformTeam)
       .useDefaultSecretEncryption(true)
       .build(scope, `${id}-stack`);
   }
