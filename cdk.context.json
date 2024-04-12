@@ -14,10 +14,7 @@
     "metrics-server": {
       "enabled": true
     },
-    "core-dns": {
-      "enabled": true
-    },
-    "kube-proxy": {
+    "nginx": {
       "enabled": true
     },
     "vpc-cni": {
@@ -33,7 +30,7 @@
       "enabled": false
     },
     "aws-load-balancer-controller": {
-      "enabled": false
+      "enabled": true
     },
     "aws-node-termination-handler": {
       "enabled": false

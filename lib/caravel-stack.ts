@@ -1,12 +1,13 @@
-import * as cdk from "aws-cdk-lib";
+import * as eks from "aws-cdk-lib/aws-eks";
 import { Construct } from "constructs";
 import * as blueprints from "@aws-quickstart/eks-blueprints";
 import * as team from "./teams";
+import { Stack, StackProps } from "aws-cdk-lib";
 
 const addOns: Array<blueprints.ClusterAddOn> = [];
 
-export class CaravelStack extends cdk.Stack {
-  constructor(scope: Construct, id: string, props?: cdk.StackProps) {
+export class CaravelStack extends Stack {
+  constructor(scope: Construct, id: string, props?: StackProps) {
     super(scope, id, props);
 
     blueprints.HelmAddOn.validateHelmVersions = this.node.tryGetContext(
@@ -17,20 +18,41 @@ export class CaravelStack extends cdk.Stack {
     const devTeam = new team.TeamDev(scope, this.account);
     const platformTeam = new team.TeamPlatform(scope, this.account);
 
+    const fargateProfiles: Map<string, eks.FargateProfileOptions> = new Map([
+      ["ion", { selectors: [{ namespace: "ion" }] }],
+    ]);
+
+    const fargateClusterProvider = new blueprints.FargateClusterProvider({
+      fargateProfiles,
+      version: eks.KubernetesVersion.V1_29,
+    });
+
     const stack = blueprints.EksBlueprint.builder()
       .account(this.account)
+      .clusterProvider(fargateClusterProvider)
       .region(props?.env?.region)
       .version(this.node.tryGetContext("caravel.eks.version"))
       .addOns(...addOns)
       .teams(devTeam, platformTeam)
       .useDefaultSecretEncryption(true)
-      .build(scope, `${id}-stack`);
+      .build(scope, `${id}-stk`);
   }
 }
 
 function enableClusterAddons(scope: Construct) {
-  if (scope.node.tryGetContext("caravel.eks.addons")["argo-cd"]["enabled"]) {
-    addOns.push(new blueprints.addons.ArgoCDAddOn());
+  if (scope.node.tryGetContext("caravel.eks.addons")["vpc-cni"]["enabled"]) {
+    addOns.push(new blueprints.addons.VpcCniAddOn());
+  }
+  if (
+    scope.node.tryGetContext("caravel.eks.addons")[
+      "aws-load-balancer-controller"
+    ]["enabled"]
+  ) {
+    addOns.push(new blueprints.addons.AwsLoadBalancerControllerAddOn());
+  }
+
+  if (scope.node.tryGetContext("caravel.eks.addons")["nginx"]["enabled"]) {
+    addOns.push(new blueprints.addons.NginxAddOn());
   }
 
   if (
@@ -38,16 +60,7 @@ function enableClusterAddons(scope: Construct) {
   ) {
     addOns.push(new blueprints.addons.MetricsServerAddOn());
   }
-
-  if (scope.node.tryGetContext("caravel.eks.addons")["core-dns"]["enabled"]) {
-    addOns.push(new blueprints.addons.CoreDnsAddOn());
-  }
-
-  if (scope.node.tryGetContext("caravel.eks.addons")["kube-proxy"]["enabled"]) {
-    addOns.push(new blueprints.addons.KubeProxyAddOn());
-  }
-
-  if (scope.node.tryGetContext("caravel.eks.addons")["vpc-cni"]["enabled"]) {
-    addOns.push(new blueprints.addons.VpcCniAddOn());
+  if (scope.node.tryGetContext("caravel.eks.addons")["argo-cd"]["enabled"]) {
+    addOns.push(new blueprints.addons.ArgoCDAddOn());
   }
 }
