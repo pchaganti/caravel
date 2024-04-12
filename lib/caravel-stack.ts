@@ -1,6 +1,7 @@
 import * as cdk from "aws-cdk-lib";
 import { Construct } from "constructs";
 import * as blueprints from "@aws-quickstart/eks-blueprints";
+import * as team from "./teams";
 
 const addOns: Array<blueprints.ClusterAddOn> = [];
 
@@ -13,12 +14,14 @@ export class CaravelStack extends cdk.Stack {
     );
 
     enableClusterAddons(this);
+    const devTeam = new team.TeamDev(scope);
 
     const stack = blueprints.EksBlueprint.builder()
       .account(props?.env?.account)
       .region(props?.env?.region)
       .version(this.node.tryGetContext("caravel.eks.version"))
       .addOns(...addOns)
+      .teams(devTeam)
       .useDefaultSecretEncryption(true)
       .build(scope, `${id}-stack`);
   }
